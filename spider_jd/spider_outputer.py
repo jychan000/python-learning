@@ -158,7 +158,7 @@ class SpiderOutputer(object):
 
 
     def out_2_mysql(self):
-        print "执行一次写入"
+        # print "执行一次写入"
         self.conn = MySQLdb.Connect(
             host = '127.0.0.1',
             # host = '172.26.21.13',
