@@ -3,6 +3,7 @@
 echo "---- spider jd ----"
 
 tpid=`ps aux | grep -c 'spider_main'`
+pwd=`pwd`
 
 help() {
 cat << HELP
@@ -18,6 +19,11 @@ exit 0
 start() {
     echo "starting......"
     if [ $tpid -le 1 ]; then
+        #判断文件夹log是否存在,不存在则创建之
+        if [ ! -d "$pwd/log"]; then
+            mkdir "$pwd/log"
+        fi
+
         #把终端输出的内容写到 log/console.log 文件
         python spider_jd/spider_main.py > log/console.log &
         #把进程号pid写到 /log/spider_jd_pid.log文件
