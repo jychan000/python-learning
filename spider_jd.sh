@@ -20,8 +20,8 @@ start() {
     echo "starting......"
     if [ $tpid -le 1 ]; then
         #判断文件夹log是否存在,不存在则创建之
-        if [ ! -d "$pwd/log"]; then
-            mkdir "$pwd/log"
+        if [ ! -d "${pwd}/log"]; then
+            mkdir "${pwd}/log"
         fi
 
         #把终端输出的内容写到 log/console.log 文件
