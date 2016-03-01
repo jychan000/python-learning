@@ -3,9 +3,6 @@
 echo "---- spider jd ----"
 
 tpid=`ps aux | grep -c 'spider_main'`
-pwd=`pwd`
-logpath="${pwd}/log"
-echo $logpath
 
 help() {
 cat << HELP
@@ -21,28 +18,24 @@ exit 0
 start() {
     echo "starting......"
     if [ $tpid -le 1 ]; then
-        #判断文件夹log是否存在,不存在则创建之
-        if [ ! -d "$logpath"]; then
-            mkdir $logpath
-        fi
 
-        #把终端输出的内容写到 log/console.log 文件
-        python spider_jd/spider_main.py > log/console.log &
-        #把进程号pid写到 /log/spider_jd_pid.log文件
-        echo $! > log/spider_jd_pid.log
+        #把终端输出的内容写到 console.log 文件
+        python spider_jd/spider_main.py > console.log &
+        #把进程号pid写到 spider_jd_pid.log文件
+        echo $! > spider_jd_pid.log
         echo "pid:$!"
     else
-        echo "alread start. PID:`cat log/spider_jd_pid.log`"
+        echo "alread start. PID:`cat spider_jd_pid.log`"
         exit 0
     fi
 }
 
 stop() {
     echo "stop......"
-    pid=`cat log/spider_jd_pid.log`
+    pid=`cat spider_jd_pid.log`
     echo "Kill pid:$pid"
     kill -9 $pid
-    rm log/spider_jd_pid.log
+    rm spider_jd_pid.log
 }
 
 version() {
