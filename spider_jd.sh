@@ -2,7 +2,7 @@
 
 echo "---- spider jd ----"
 
-tpid=`ps aux | grep -c 'spider_jd'`
+tpid=`ps aux | grep -c 'spider_main'`
 echo $tpid
 
 help() {
