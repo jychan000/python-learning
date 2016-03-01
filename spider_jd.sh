@@ -19,22 +19,22 @@ exit 0
 start() {
     echo "starting......"
     if [ $tpid -le 1 ]; then
-        #把终端输出的内容写到console.log文件
-        python spider_jd/spider_main.py > console.log &
-        #把进程号pid写到spider_jd_pid.log文件
-        echo $! > spider_jd_pid.log
+        #把终端输出的内容写到 log/console.log 文件
+        python spider_jd/spider_main.py > log/console.log &
+        #把进程号pid写到 /log/spider_jd_pid.log文件
+        echo $! > log/spider_jd_pid.log
     else
-        echo "alread start. PID:`cat spider_jd_pid.log`"
+        echo "alread start. PID:`cat log/spider_jd_pid.log`"
         exit 0
     fi
 }
 
 stop() {
     echo "stop......"
-    pid=`cat spider_jd_pid.log`
+    pid=`cat log/spider_jd_pid.log`
     echo "Kill pid:$pid"
     kill -9 $pid
-    rm spider_jd_pid.log
+    rm log/spider_jd_pid.log
 }
 
 version() {
