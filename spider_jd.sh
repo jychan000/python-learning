@@ -3,7 +3,6 @@
 echo "---- spider jd ----"
 
 tpid=`ps aux | grep -c 'spider_main'`
-echo $tpid
 
 help() {
 cat << HELP
@@ -23,6 +22,7 @@ start() {
         python spider_jd/spider_main.py > log/console.log &
         #把进程号pid写到 /log/spider_jd_pid.log文件
         echo $! > log/spider_jd_pid.log
+        echo "pid:$!"
     else
         echo "alread start. PID:`cat log/spider_jd_pid.log`"
         exit 0
