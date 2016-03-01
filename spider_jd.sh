@@ -4,6 +4,8 @@ echo "---- spider jd ----"
 
 tpid=`ps aux | grep -c 'spider_main'`
 pwd=`pwd`
+logpath="${pwd}/log"
+echo $logpath
 
 help() {
 cat << HELP
@@ -20,8 +22,8 @@ start() {
     echo "starting......"
     if [ $tpid -le 1 ]; then
         #判断文件夹log是否存在,不存在则创建之
-        if [ ! -d "${pwd}/log"]; then
-            mkdir "${pwd}/log"
+        if [ ! -d "$logpath"]; then
+            mkdir $logpath
         fi
 
         #把终端输出的内容写到 log/console.log 文件
