@@ -8,7 +8,8 @@ setup(name='spider-jd',
       author_email='415683089@qq.com',
       packages=['spider_jd'],
       install_requires=[
-          'pybluez',
+            'pybluez',
+            'pandas'
       ],
       zip_safe=False
       )
