@@ -50,6 +50,7 @@ class SpiderMain(object):
 
         app_end_time = time.time()
 
+        print "是否还有new item:", (self.items.has_new_item())
         print "耗时:%d分钟, 处理数量:%d" % ((app_end_time - app_start_time)/60, count)
 
 
