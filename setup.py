@@ -9,7 +9,8 @@ setup(name='spider-jd',
       packages=['spider_jd'],
       install_requires=[
             'pybluez',
-            'pandas'
+            'pandas',
+            'MySQL-python'
       ],
       zip_safe=False
       )

@@ -20,7 +20,7 @@ start() {
     if [ $tpid -le 1 ]; then
 
         #把终端输出的内容写到 console.log 文件
-        python spider_jd/spider_main.py > console.log &
+        python spider_jd/spider_main.py >> console.log &
         #把进程号pid写到 spider_jd_pid.log文件
         echo $! > spider_jd_pid.log
         echo "pid:$!"
@@ -62,3 +62,4 @@ case "$1" in
         help
     ;;
 esac
+
