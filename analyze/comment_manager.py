@@ -8,16 +8,11 @@ import MySQLdb
 class CommentManager(object):
 
     def __init__(self):
-        print ">>>>> CommentManager init..."
-
         cf = ConfigParser.ConfigParser()
         path = os.path.dirname(os.path.abspath("db_config.ini"))
         path = path + "/db_config.ini"
         print "config file path: ", path
         cf.read(path)
-
-        # s = cf.sections()
-        # print s
 
         db_host = cf.get("baseconf", "host")
         db_port = cf.getint("baseconf", "port")
@@ -25,7 +20,8 @@ class CommentManager(object):
         db_pwd = cf.get("baseconf", "password")
         db_name = cf.get("baseconf", "dbname")
 
-
+        # s = cf.sections()
+        # print s
         # o = cf.options("baseconf")
         # print o
         # v = cf.items("baseconf")
