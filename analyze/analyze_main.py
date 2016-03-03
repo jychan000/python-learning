@@ -125,17 +125,10 @@ if __name__ == '__main__':
     print "程序开始 ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     start_time = time.time()
 
-    # analyzer = AnalyzeMain()
-    # analyzer.analyze()
+    analyzer = AnalyzeMain()
+    analyzer.analyze()
 
     end_time = time.time()
     print "程序结束 ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print "耗时:", (end_time - start_time), "秒"
 
-    ABSPATH=os.path.abspath(sys.argv[0])
-    # ABSPATH=os.path.abspath(".")
-    ABSPATH=os.path.dirname(ABSPATH)+"/"
-
-    print ABSPATH
-
-    print os.path.dirname(os.path.abspath("db_config.ini"))
