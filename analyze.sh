@@ -20,12 +20,10 @@ start() {
     if [ $tpid -le 1 ]; then
 
         #把终端输出的内容写到 console-analyze.log 文件
-        cd analyze
-        python analyze_main.py >> ../console-analyze.log &
+        python analyze/analyze_main.py >> console-analyze.log &
         #把进程号pid写到 analyze_pid.log文件
-        echo $! > ../analyze_pid.log
+        echo $! > analyze_pid.log
         echo "pid:$!"
-        cd ..
     else
         echo "analyze alread start. PID:`cat analyze_pid.log`"
         exit 0
