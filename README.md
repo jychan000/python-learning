@@ -1,8 +1,8 @@
 # python-learning
 
 
- * spider_jd 京东的爬虫
- * analyze 分析京东商品评论数,计算增量
+ * `spider_jd` 京东的爬虫
+ * `analyze` 分析京东商品评论数,计算增量
 
 
 安装工具
