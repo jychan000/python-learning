@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ConfigParser
+import os
 
 import time
 
@@ -122,9 +123,11 @@ if __name__ == '__main__':
     print "程序开始 ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     start_time = time.time()
 
-    analyzer = AnalyzeMain()
-    analyzer.analyze()
+    # analyzer = AnalyzeMain()
+    # analyzer.analyze()
 
     end_time = time.time()
     print "程序结束 ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print "耗时:", (end_time - start_time), "秒"
+
+    print os.path.dirname(os.path.abspath("db_config.ini"))
