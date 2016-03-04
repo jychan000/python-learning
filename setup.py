@@ -1,10 +1,10 @@
 from setuptools import setup
 
-setup(name='spider-jd',
+setup(name='my-python',
       version='1.0.1',
       description='hello 123',
-      url='https://github.com/raymondchen/python-learning/tree/master/spider_jd',
-      author='jychan',
+      url='https://github.com/raymondchen/python-learning',
+      author='chenjinying',
       author_email='415683089@qq.com',
       packages=['spider_jd', 'analyze'],
       install_requires=[
