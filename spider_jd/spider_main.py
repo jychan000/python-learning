@@ -54,12 +54,8 @@ class SpiderMain(object):
         print "耗时:%d分钟, 处理数量:%d" % ((app_end_time - app_start_time)/60, count)
 
 
-
-
-
 if __name__ == "__main__":
     print "程序开始 ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-
 
     # 打包参考https://github.com/robintibor/python-mindwave-mobile
 
