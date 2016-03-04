@@ -27,7 +27,6 @@ class AnalyzeMain(object):
         """
 
         skuid = None
-
         first_batch_time = None
         first_comment = None
 
@@ -101,7 +100,7 @@ class AnalyzeMain(object):
             print e
         finally:
             self.incr.close()
-
+            self.comments.close()
 
         print "None :", num_none
         print "not None :", num_not_none

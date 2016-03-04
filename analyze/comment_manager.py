@@ -29,7 +29,6 @@ class CommentManager(object):
         #生成新的配置文件,名为:config_file_path
         #cf.write(open("config_file_path", "w"))
 
-
         self.conn = MySQLdb.Connect(
             host = db_host,
             port = db_port,
@@ -38,11 +37,9 @@ class CommentManager(object):
             db = db_name,
             charset = 'utf8'
         )
-
         sql_select = "select * from spider_jd_comment order by skuid asc, crawl_time desc"
         self.cursor = self.conn.cursor()
         num = self.cursor.execute(sql_select)
-
         if num < 2:
             print "表[spider_jd_comment]无数据. num=%d" % (num)
             return
@@ -53,9 +50,11 @@ class CommentManager(object):
         self.last_row = None
         self.last_comments = list()
 
+        # -------- 用于删除 --------
+        self.rm_count = 0
+        self.cursor_rm = self.conn.cursor()
 
     def get_one_sku_comments(self):
-
         try:
             while self.cursor.rownumber < self.rowcount:
                 row = self.cursor.fetchone()
@@ -83,27 +82,36 @@ class CommentManager(object):
             self.last_row = None
             return self.last_comments
 
-
         except Exception as e:
             print e
         finally:
             pass
-            # print "get one finally..."
-            # self.cursor.close()
-            # self.conn.close()
 
 
     def has_next_sku(self):
-
         #1.是否首次访问
         if self.last_skuid == "0" and self.rowcount >= 1:
             return True
-
         #2.是否有上次的纪录
         if self.last_row != None:
             return True
-
         return False
+
+    def rm_old_comment(self, sku_datetime):
+        if sku_datetime == None or sku_datetime == "":
+            pass
+        sql_delete = "delete from spider_jd_comment where sku_datetime='%s'" % (sku_datetime)
+        self.cursor_rm.execute(sql_delete)
+        self.rm_count += 1
+        if self.rm_count >= 10:
+            self.conn.commit()
+
+    def close(self):
+        self.conn.commit()
+        self.cursor.close()
+        self.conn.close()
+
+
 
 
 
