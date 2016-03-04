@@ -76,6 +76,9 @@ class AnalyzeMain(object):
 
     def analyze(self):
 
+        print self.comments.has_next_sku()
+        self.comments.test()
+
         num_none = 0
         num_not_none = 0
         num = 0
@@ -100,7 +103,7 @@ class AnalyzeMain(object):
             print e
         finally:
             self.incr.close()
-            self.comments.close()
+            self.comments.commit_close()
 
         print "None :", num_none
         print "not None :", num_not_none

@@ -8,6 +8,7 @@ import MySQLdb
 class CommentManager(object):
 
     def __init__(self):
+        print "CommentManager初始化"
         cf = ConfigParser.ConfigParser()
         path = os.path.dirname(os.path.abspath("db_config.ini"))
         path = path + "/db_config.ini"
@@ -106,10 +107,13 @@ class CommentManager(object):
         if self.rm_count >= 10:
             self.conn.commit()
 
-    def close(self):
+    def commit_close(self):
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
+
+    def test(self):
+        print "test."
 
 
 
