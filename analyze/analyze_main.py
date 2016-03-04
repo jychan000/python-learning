@@ -75,10 +75,6 @@ class AnalyzeMain(object):
 
 
     def analyze(self):
-
-        print self.comments.has_next_sku()
-        self.comments.test()
-
         num_none = 0
         num_not_none = 0
         num = 0
