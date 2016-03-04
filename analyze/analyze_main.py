@@ -10,11 +10,11 @@ class AnalyzeMain(object):
         self.comments = comment_manager.CommentManager()
         self.incr = incr_manager.IncrManager()
 
-    def __incr(self, markXh, time_offset, incr, n):
+    def __incr(self, markXh, incrXh, time_offset, incr, n):
         if not markXh and time_offset >= n:
             incrXh = incr * n / time_offset
             return True, incrXh
-        return markXh, 0l
+        return markXh, incrXh
 
 
     def analyze_comments(self, comments):
@@ -47,6 +47,8 @@ class AnalyzeMain(object):
         for comment in comments:
 
             skuid = comment[1]
+            if skuid == "1361557":
+                print "发现skuid=1361557"
             batch_time = comment[2]#爬取时间
             if batch_time == None:
                 continue
@@ -60,12 +62,12 @@ class AnalyzeMain(object):
                 # 评论增加量
                 incr = first_comment[3] - comment[3]
 
-                mark3h,  incr3h  = self.__incr(mark3h,  time_offset, incr, 3)
-                mark6h,  incr6h  = self.__incr(mark6h,  time_offset, incr, 6)
-                mark12h, incr12h = self.__incr(mark12h, time_offset, incr, 12)
-                mark24h, incr24h = self.__incr(mark24h, time_offset, incr, 24)
-                mark48h, incr48h = self.__incr(mark48h, time_offset, incr, 48)
-                mark72h, incr72h = self.__incr(mark72h, time_offset, incr, 72)
+                mark3h,  incr3h  = self.__incr(mark3h,  incr3h,  time_offset, incr, 3)
+                mark6h,  incr6h  = self.__incr(mark6h,  incr6h,  time_offset, incr, 6)
+                mark12h, incr12h = self.__incr(mark12h, incr12h, time_offset, incr, 12)
+                mark24h, incr24h = self.__incr(mark24h, incr24h, time_offset, incr, 24)
+                mark48h, incr48h = self.__incr(mark48h, incr48h, time_offset, incr, 48)
+                mark72h, incr72h = self.__incr(mark72h, incr72h, time_offset, incr, 72)
 
                 if mark72h and time_offset >= 72:
                     sku_datetime = comment[0]
