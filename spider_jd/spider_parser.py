@@ -46,15 +46,18 @@ class SpiderParser(object):
         brand = re.findall(r"brand:(.+?),", soup.head.script.string)[0].encode('ascii','ignore').strip()
         product_info['brand'] = brand
 
+        # 商品图片
+        picture = re.findall(r"src: '(.+?)',", soup.head.script.string)[0].encode('ascii','ignore').strip()
+        product_info['picture'] = picture
+
         # skuid2 = re.findall(r"skuid:(.+?),", soup.head.script.string)[0].encode('ascii','ignore').strip()
         # product_info['skuid2'] = skuid2
 
         # skuid3 = unicodedata.normalize('NFKD', re.findall(r"skuid:(.+?),", soup.head.script.string)[0]).encode('utf-8').strip()
         # product_info['skuid3'] = skuid3
 
-        skuidkey = re.findall(r"skuidkey:(.+?),", soup.head.script.string)[0].encode('ascii','ignore')
-        product_info['skuidkey'] = skuidkey
-
+        #skuidkey = re.findall(r"skuidkey:(.+?),", soup.head.script.string)[0].encode('ascii','ignore')
+        #product_info['skuidkey'] = skuidkey
 
         return product_info
 

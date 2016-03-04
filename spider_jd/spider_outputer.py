@@ -71,7 +71,7 @@ class SpiderOutputer(object):
     # 写入商品信息表
     def update_insert_item(self, data):
         sql = "replace into spider_jd_item(%s) " \
-              "values('%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, %s, now(), %s)"
+              "values('%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, %s, '%s', now(), %s)"
         sql_column = "" \
                      "skuid, " \
                      "product_name, " \
@@ -83,6 +83,7 @@ class SpiderOutputer(object):
                      "price, " \
                      "price_cost, " \
                      "comment_count, " \
+                     "picture, " \
                      "update_time, "
 
         re_see_str = ""
@@ -106,6 +107,7 @@ class SpiderOutputer(object):
             data['price_p'],
             data['price_m'],
             data['CommentsCount'][0]['CommentCount'],
+            data['picture'],
             re_see_str
         )
         # print sql

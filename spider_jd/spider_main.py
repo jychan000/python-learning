@@ -13,7 +13,6 @@ class SpiderMain(object):
 
     def craw(self, target_items, time_long):
         print "参数目标 %d分钟" % (time_long)
-
         app_start_time = time.time()
 
         time_start = time.time()
