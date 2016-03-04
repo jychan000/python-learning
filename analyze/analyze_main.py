@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-import ConfigParser
-import os
-
 import time
-
-import sys
 
 from analyze import comment_manager, incr_manager
 
@@ -14,6 +9,13 @@ class AnalyzeMain(object):
     def __init__(self):
         self.comments = comment_manager.CommentManager()
         self.incr = incr_manager.IncrManager()
+
+    def __incr(self, markXh, time_offset, incr, n):
+        if not markXh and time_offset >= n:
+            incrXh = incr * n / time_offset
+            return True, incrXh
+        return markXh, 0l
+
 
     def analyze_comments(self, comments):
         """
@@ -46,7 +48,7 @@ class AnalyzeMain(object):
         for comment in comments:
 
             skuid = comment[1]
-            batch_time = comment[2]#爬去时间
+            batch_time = comment[2]#爬取时间
             if batch_time == None:
                 continue
             if first_batch_time == None:
@@ -54,37 +56,23 @@ class AnalyzeMain(object):
                 first_comment = comment
 
             else:
-                # 最新批次评论与首批的 时间差(小时)
+                # 最新批次与当前批次的 时间差(小时)
                 time_offset = (first_batch_time - batch_time).seconds / 3600
+                # 评论增加量
+                incr = first_comment[3] - comment[3]
 
-                if not mark3h and time_offset >= 3:
-                    incr = first_comment[3] - comment[3]
-                    incr3h = incr * 3 / time_offset;
-                    mark3h = True
-                if not mark6h and time_offset >= 6:
-                    incr = first_comment[3] - comment[3]
-                    incr6h = incr * 6 / time_offset;
-                    mark6h = True
-                if not mark12h and time_offset >= 12:
-                    incr = first_comment[3] - comment[3]
-                    incr12h = incr * 12 / time_offset;
-                    mark12h = True
-                if not mark24h and time_offset >= 24:
-                    incr = first_comment[3] - comment[3]
-                    incr24h = incr * 24 / time_offset;
-                    mark24h = True
-                if not mark48h and time_offset >= 48:
-                    incr = first_comment[3] - comment[3]
-                    incr48h = incr * 48 / time_offset;
-                    mark48h = True
-                if not mark72h and time_offset >= 72:
-                    incr = first_comment[3] - comment[3]
-                    incr72h = incr * 72 / time_offset;
-                    mark72h = True
+                mark3h,  incr3h  = self.__incr(mark3h,  time_offset, incr, 3)
+                mark6h,  incr6h  = self.__incr(mark6h,  time_offset, incr, 6)
+                mark12h, incr12h = self.__incr(mark12h, time_offset, incr, 12)
+                mark24h, incr24h = self.__incr(mark24h, time_offset, incr, 24)
+                mark48h, incr48h = self.__incr(mark48h, time_offset, incr, 48)
+                mark72h, incr72h = self.__incr(mark72h, time_offset, incr, 72)
+
+                if mark72h and time_offset >= 72:
+                    sku_datetime = comment[0]
+                    #删除该记录
 
         return skuid, str(incr3h), str(incr6h), str(incr12h), str(incr24h), str(incr48h), str(incr72h)
-
-
 
 
     def analyze(self):
@@ -96,11 +84,9 @@ class AnalyzeMain(object):
         try:
             while self.comments.has_next_sku():
                 comments = self.comments.get_one_sku_comments()
-                # print comments
 
                 #计算某skuid的评价情况
                 skuid_incrs_str = self.analyze_comments(comments)
-                # print skuid_incrs_str
 
                 #更新增量数据
                 self.incr.upsert_incr(skuid_incrs_str);

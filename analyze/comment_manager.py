@@ -51,7 +51,6 @@ class CommentManager(object):
 
         self.last_skuid = "0" #上一个skuid
         self.last_row = None
-        # self.last_comments = set()
         self.last_comments = list()
 
 
@@ -60,12 +59,9 @@ class CommentManager(object):
         try:
             while self.cursor.rownumber < self.rowcount:
                 row = self.cursor.fetchone()
-                # print row
-
                 skuid = row[1]
 
                 if skuid == self.last_skuid:
-                    # self.last_comments.add(row)
                     self.last_comments.append(row)
                     self.last_row = row
                 else:
@@ -73,15 +69,12 @@ class CommentManager(object):
                     if self.last_skuid == "0":
                         self.last_skuid = skuid #上一个skuid
                         self.last_row = row
-                        # self.last_comments.add(row)
                         self.last_comments.append(row)
                     else:
                         tmp_comments = self.last_comments
 
                         self.last_skuid = skuid
                         self.last_row = row
-                        # self.last_comments = set()
-                        # self.last_comments.add(row)
                         self.last_comments = list()
                         self.last_comments.append(row)
 
