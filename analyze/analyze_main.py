@@ -43,12 +43,11 @@ class AnalyzeMain(object):
         mark24h = False
         mark48h = False
         mark72h = False
+        markOrver72h = False
 
         for comment in comments:
 
             skuid = comment[1]
-            if skuid == "1361557":
-                print "发现skuid=1361557"
             batch_time = comment[2]#爬取时间
             if batch_time == None:
                 continue
@@ -58,7 +57,8 @@ class AnalyzeMain(object):
 
             else:
                 # 最新批次与当前批次的 时间差(小时)
-                time_offset = (first_batch_time - batch_time).seconds / 3600
+                date_offset = (first_batch_time - batch_time)
+                time_offset = date_offset.days * 24 + (date_offset.seconds / 3600)
                 # 评论增加量
                 incr = first_comment[3] - comment[3]
 
@@ -69,9 +69,12 @@ class AnalyzeMain(object):
                 mark48h, incr48h = self.__incr(mark48h, incr48h, time_offset, incr, 48)
                 mark72h, incr72h = self.__incr(mark72h, incr72h, time_offset, incr, 72)
 
-                if mark72h and time_offset >= 72:
+                if markOrver72h:
                     sku_datetime = comment[0]
                     #删除该记录
+                    self.comments.rm_old_comment(sku_datetime)
+                if mark72h:
+                    markOrver72h = True
 
         return skuid, str(incr3h), str(incr6h), str(incr12h), str(incr24h), str(incr48h), str(incr72h)
 
@@ -84,10 +87,8 @@ class AnalyzeMain(object):
         try:
             while self.comments.has_next_sku():
                 comments = self.comments.get_one_sku_comments()
-
                 #计算某skuid的评价情况
                 skuid_incrs_str = self.analyze_comments(comments)
-
                 #更新增量数据
                 self.incr.upsert_incr(skuid_incrs_str);
 
