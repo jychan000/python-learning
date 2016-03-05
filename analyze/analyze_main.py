@@ -87,17 +87,17 @@ class AnalyzeMain(object):
         try:
             while self.comments.has_next_sku():
                 comments = self.comments.get_one_sku_comments()
-                #计算某skuid的评价情况
-                skuid_incrs_str = self.analyze_comments(comments)
-                #更新增量数据
-                self.incr.upsert_incr(skuid_incrs_str);
-
-                num += 1
                 if comments == None:
                     num_none += 1
                 else:
                     num_not_none += 1
-
+                    try:
+                        #计算某skuid的评价情况
+                        skuid_incrs_str = self.analyze_comments(comments)
+                        #更新增量数据
+                        self.incr.upsert_incr(skuid_incrs_str);
+                    except Exception as e:
+                        print e
         except Exception as e:
             print e
         finally:
