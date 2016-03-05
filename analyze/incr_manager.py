@@ -24,8 +24,11 @@ class IncrManager(object):
 
     def upsert_incr(self, skuid_incrs):
         sql = "replace into analyze_comment_incr " \
-              "(skuid, incr_3h, incr_6h, incr_12h, incr_24h, incr_48h, incr_72h, upsert_time) " \
-              "values ('%s', %s, %s, %s, %s, %s, %s, now()) "
+              "(skuid, incr_3h, incr_6h, incr_12h, incr_24h, incr_48h, incr_72h, category1, category2, category3, category4, upsert_time) " \
+              "(select '%s', %s, %s, %s, %s, %s, %s, category1, category2, category3, category4, now() from spider_jd_item where skuid=%s) "
+        list_incrs = list(skuid_incrs)
+        list_incrs.append(skuid_incrs[0])
+        skuid_incrs = tuple(list_incrs)
         sql = sql % (skuid_incrs)
         self.cursor_incr.execute(sql)
 
