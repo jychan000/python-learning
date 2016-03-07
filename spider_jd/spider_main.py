@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # 打包参考https://github.com/robintibor/python-mindwave-mobile
 
     base_target_items = [1413825] #1413825 1545675031
-    time_long = 90 #运行多久,分钟
+    time_long = 150 #运行多久,分钟
 
     obj_spider = SpiderMain()
     obj_spider.craw(base_target_items, time_long)
