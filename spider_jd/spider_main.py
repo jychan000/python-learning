@@ -18,13 +18,13 @@ class SpiderMain(object):
         time_start = time.time()
         count = 1
         count_output = 1
+        new_item_mark = None
 
         self.items.add_new_items(target_items)
         while self.items.has_new_item():
             try:
                 new_item = self.items.get_new_item()
-                # print ">> craw %d: %s" % (count, new_item)
-
+                new_item_mark = new_item
                 new_items, product_info = self.parser.parse(new_item)
 
                 self.items.add_new_items(new_items)
@@ -42,10 +42,12 @@ class SpiderMain(object):
                 count += 1
                 count_output += 1
             except Exception as e:
-                print "craw %d failed..." % (count)
+                print "craw %d failed...%s" % (count, new_item_mark)
+                print "spider_main..."
                 print e
 
         self.outputer.out_2_mysql()
+        self.outputer.close()
 
         app_end_time = time.time()
 
@@ -58,8 +60,8 @@ if __name__ == "__main__":
 
     # 打包参考https://github.com/robintibor/python-mindwave-mobile
 
-    base_target_items = [1413825] #1413825 1545675031
-    time_long = 150 #运行多久,分钟
+    base_target_items = [1413825, 2141606] #1413825 1545675031
+    time_long = 1 #运行多久,分钟
 
     obj_spider = SpiderMain()
     obj_spider.craw(base_target_items, time_long)

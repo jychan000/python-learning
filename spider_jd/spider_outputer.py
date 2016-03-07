@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import ConfigParser
+
 import MySQLdb
 import time
 
@@ -8,19 +10,29 @@ class SpiderOutputer(object):
     def __init__(self):
         self.product_infos = []
 
+        cf = ConfigParser.ConfigParser()
+        cf.read("db_config.ini")
+
+        self.conn = MySQLdb.Connect(
+            host = cf.get("baseconf", "host"),
+            port = cf.getint("baseconf", "port"),
+            user = cf.get("baseconf", "user"),
+            passwd = cf.get("baseconf", "password"),
+            db = cf.get("baseconf", "dbname"),
+            charset = 'utf8'
+        )
+        self.cursor = self.conn.cursor()
+
+
 
     def collect_data(self, product_info):
         if product_info is None:
             return
         self.product_infos.append(product_info)
 
-    def show_infos(self):
-        print self.product_infos
 
     #输出成html已经弃用,只是留着参考代码而已,不可用的了
     def output_html(self):
-        print "=================="
-
         fout = open('output.html', 'w')
 
         fout.write("<html>")
@@ -72,19 +84,9 @@ class SpiderOutputer(object):
     def update_insert_item(self, data):
         sql = "replace into spider_jd_item(%s) " \
               "values('%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, %s, '%s', now(), %s)"
-        sql_column = "" \
-                     "skuid, " \
-                     "product_name, " \
-                     "brand_id, " \
-                     "category1, " \
-                     "category2, " \
-                     "category3, " \
-                     "category4, " \
-                     "price, " \
-                     "price_cost, " \
-                     "comment_count, " \
-                     "picture, " \
-                     "update_time, "
+        sql_column = "skuid, product_name, brand_id, " \
+                     "category1, category2, category3, category4, " \
+                     "price, price_cost, comment_count, picture, update_time, "
 
         re_see_str = ""
         index = 1
@@ -97,17 +99,9 @@ class SpiderOutputer(object):
         re_see_str = re_see_str[:-2]
         sql = sql % (
             sql_column,
-            data['skuid'],
-            data['name'],
-            data['brand'],
-            data['category1'],
-            data['category2'],
-            data['category3'],
-            data['category4'],
-            data['price_p'],
-            data['price_m'],
-            data['CommentsCount'][0]['CommentCount'],
-            data['picture'],
+            data['skuid'], data['name'], data['brand'],
+            data['category1'], data['category2'], data['category3'], data['category4'],
+            data['price_p'], data['price_m'], data['CommentsCount'][0]['CommentCount'], data['picture'],
             re_see_str
         )
         # print sql
@@ -119,25 +113,11 @@ class SpiderOutputer(object):
         comment_info = data['CommentsCount'][0] #是一个字典类型
         sku_datetime = time.strftime("%Y%m%d-%H", time.localtime()) + "-" + str(comment_info['SkuId'])
 
-        sql = "replace into spider_jd_comment(" \
-              "sku_datetime, " \
-              "skuid, " \
-              "crawl_time, " \
-              "comment_count, " \
-              "good_count, " \
-              "general_count, " \
-              "poor_count, " \
-              "good_rate, " \
-              "general_rate, " \
-              "poor_rate, " \
-              "score1_count, " \
-              "score2_count, " \
-              "score3_count, " \
-              "score4_count, " \
-              "score5_count, " \
-              "average_score) " \
+        sql = "replace into spider_jd_comment" \
+              "(sku_datetime, skuid, crawl_time, comment_count, good_count, " \
+              "general_count, poor_count, good_rate, general_rate, poor_rate, " \
+              "score1_count, score2_count, score3_count, score4_count, score5_count, average_score) " \
               "values('%s', '%s', now(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-
         sql = sql % (
             sku_datetime,
             comment_info['SkuId'],
@@ -160,17 +140,6 @@ class SpiderOutputer(object):
 
 
     def out_2_mysql(self):
-        # print "执行一次写入"
-        self.conn = MySQLdb.Connect(
-            host = '127.0.0.1',
-            # host = '172.26.21.13',
-            port = 3306,
-            user = 'root',
-            passwd = 'sa',
-            db = 'spider',
-            charset = 'utf8'
-        )
-        self.cursor = self.conn.cursor()
         try:
             for p_info in self.product_infos:
                 self.update_insert_item(p_info)
@@ -182,8 +151,10 @@ class SpiderOutputer(object):
             self.conn.rollback()
         finally:
             self.product_infos = []
-            self.cursor.close()
-            self.conn.close()
+
+    def close(self):
+        self.cursor.close()
+        self.conn.close()
 
 
 
