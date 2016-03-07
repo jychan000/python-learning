@@ -20,10 +20,12 @@ start() {
     if [ $tpid -le 1 ]; then
 
         #把终端输出的内容写到 console-spider.log  文件
-        python spider_jd/spider_main.py >> console-spider.log &
+        cd spider_jd
+        python spider_main.py >> ../console-spider.log &
         #把进程号pid写到 pid-spider-jd.log文件
-        echo $! > pid-spider-jd.log
+        echo $! > ../pid-spider-jd.log
         echo "pid:$!"
+        cd ..
     else
         echo "alread start. PID:`cat pid-spider-jd.log`"
         exit 0
