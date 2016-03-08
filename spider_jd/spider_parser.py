@@ -47,7 +47,7 @@ class SpiderParser(object):
         product_info['brand'] = brand
 
         # 商品图片
-        picture = re.findall(r"src: '(.+?)',", soup.head.script.string)[0].encode('ascii','ignore').strip()
+        picture = re.findall(r"src: '(.+?)',", soup.head.script.string)[0]
         product_info['picture'] = picture
 
         # skuid2 = re.findall(r"skuid:(.+?),", soup.head.script.string)[0].encode('ascii','ignore').strip()
@@ -58,6 +58,7 @@ class SpiderParser(object):
 
         #skuidkey = re.findall(r"skuidkey:(.+?),", soup.head.script.string)[0].encode('ascii','ignore')
         #product_info['skuidkey'] = skuidkey
+
 
         return product_info
 
@@ -98,6 +99,8 @@ class SpiderParser(object):
         html_cont_re_see   = self.downloader.get_html_cont(url_re_see).decode('gbk', 'ignore')
 
         # print html_cont
+        if html_cont is None:
+            print "care! html_cont is None."
 
         product_info = self._get_product_info(item, html_cont)
         p_price = self._get_product_price(html_cont_price)
