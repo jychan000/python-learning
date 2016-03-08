@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import traceback
 
 from spider_jd import item_manager, spider_parser, spider_outputer
 
@@ -45,6 +46,8 @@ class SpiderMain(object):
                 print "craw %d failed...%s" % (count, new_item_mark)
                 print "spider_main..."
                 print e
+                exstr = traceback.format_exc()
+                print exstr
 
         self.outputer.out_2_mysql()
         self.outputer.close()
@@ -60,7 +63,7 @@ if __name__ == "__main__":
 
     # 打包参考https://github.com/robintibor/python-mindwave-mobile
 
-    base_target_items = [1413825, 2141606] #1413825 1545675031
+    base_target_items = [1413825, 2141606] #[1696976623]
     time_long = 150 #运行多久,分钟
 
     obj_spider = SpiderMain()
