@@ -54,9 +54,6 @@ class SpiderMain(object):
     def after_craw(self):
         pass
 
-
-# 合理控制退出
-
 if __name__ == '__main__':
     print "[%s] 爬虫程序开始" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
