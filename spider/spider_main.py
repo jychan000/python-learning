@@ -13,6 +13,8 @@ class SpiderMain(object):
         self.config = config_center.SpiderConfig()
         self.runtime = self.config.runtime #运行时间(分钟)
 
+        print "计划爬去item%d分钟" % (self.runtime)
+
         self.item_pending_queue = Queue.Queue(0)
         self.paserA = spider_thread.SpiderParserThread("parser_A", self.item_pending_queue, 4, (self.runtime + 2))
         self.paserB = spider_thread.SpiderParserThread("parser_B", self.item_pending_queue, 5, (self.runtime + 2))
