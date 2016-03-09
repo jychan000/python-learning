@@ -10,7 +10,7 @@ class SpiderMain(object):
     def __init__(self):
         self.items = item_manager.UrlManager() #管理要爬得目标商品列表
         self.item_miner = item_miner.itemMiner() # item矿工,用来发现更多item
-        self.runtime = 1 #运行时间(分钟)
+        self.runtime = 150 #运行时间(分钟)
 
         self.item_pending_queue = Queue.Queue(0)
         self.paserA = spider_thread.SpiderParserThread("parser_A", self.item_pending_queue, 4, (self.runtime + 2))
