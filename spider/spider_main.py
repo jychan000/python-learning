@@ -40,6 +40,8 @@ class SpiderMain(object):
 
             if not self.items.has_new_item():
                 #items里没有新的item,无法继续探索其他item,结束item_miner工作
+                print "[%s] item管理器里面没有新的item,主程序停止抓取工作." \
+                      % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                 break
 
             new_item = self.items.get_new_item()
