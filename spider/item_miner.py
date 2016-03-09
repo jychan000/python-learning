@@ -2,32 +2,18 @@
 import json
 import traceback
 
+from spider.config_center import ConfigCenter
 from spider.spider_downloader import SpiderDownloader
-
-jd_1 = "http://diviner.jd.com/diviner?lid=19&lim=8&uuid=0&p=105000&sku=%s"
-
-
-sw = {
-    'jd':  lambda skuid: jd_1 % skuid,
-    'tb':  lambda skuid: "unknow",
-    'vip': lambda skuid: "unknow",
-}
 
 class itemMiner(object):
 
     def __init__(self):
-        print "itemMiner.init()"
+        pass
 
     def mining(self, item):
-        if item is None:
-            return None
-
         platform, skuid = item.split("_")
-        if platform is None or skuid is None:
-            print "unknow paltform or skuid"
-            return None
 
-        url = sw[platform](skuid)
+        url = ConfigCenter.url_resee(item)
         if url is None or url == "unknow":
             return None
 
