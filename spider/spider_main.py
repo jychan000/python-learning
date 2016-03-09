@@ -2,7 +2,7 @@
 import Queue
 import time
 
-from spider import item_manager, item_miner, spider_thread
+from spider import item_manager, item_miner, spider_thread, config_center
 
 
 class SpiderMain(object):
@@ -10,7 +10,8 @@ class SpiderMain(object):
     def __init__(self):
         self.items = item_manager.UrlManager() #管理要爬得目标商品列表
         self.item_miner = item_miner.itemMiner() # item矿工,用来发现更多item
-        self.runtime = 150 #运行时间(分钟)
+        self.config = config_center.SpiderConfig()
+        self.runtime = self.config.runtime #运行时间(分钟)
 
         self.item_pending_queue = Queue.Queue(0)
         self.paserA = spider_thread.SpiderParserThread("parser_A", self.item_pending_queue, 4, (self.runtime + 2))
@@ -49,7 +50,7 @@ class SpiderMain(object):
             if self.item_pending_queue.qsize() > 200:
                 # print "item_queue数量大于300, 暂停5秒中..."
                 time.sleep(5)
-        print "[%s] 主线程停止抓取items,等待全部子线程结束." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        print "[%s] 主程序停止抓取items,等待全部子线程结束." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
     def after_craw(self):
         pass

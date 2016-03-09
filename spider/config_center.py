@@ -1,3 +1,5 @@
+import ConfigParser
+
 url_homepage_jd = "http://item.jd.com/%s.html"
 url_homepage_tb = ""
 url_homepage_vip = ""
@@ -74,3 +76,28 @@ class ConfigCenter(object):
     @staticmethod
     def url_resee(item):
         return ConfigCenter.geturl(sw_resee, item)
+
+
+def singleton(cls, *args, **kw):
+    instances = {}
+    def _singleton():
+        if cls not in instances:
+            instances[cls] = cls(*args, **kw)
+        return instances[cls]
+    return _singleton
+
+@singleton
+class SpiderConfig(object):
+
+    def __init__(self):
+        cf = ConfigParser.ConfigParser()
+        cf.read("spider.ini")
+
+        self.runtime = int(cf.get("baseconf", "runtime"))
+
+if __name__ == '__main__':
+    c1 = SpiderConfig()
+    c2 = SpiderConfig()
+    print c1.runtime
+    c1.a = 7
+    print c2.runtime
