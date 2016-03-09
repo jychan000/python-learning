@@ -6,7 +6,7 @@ setup(name='spider-jd',
       url='https://github.com/raymondchen/python-learning/tree/master/spider_jd',
       author='jychan',
       author_email='415683089@qq.com',
-      packages=['spider_jd', 'analyze'],
+      packages=['spider_jd', 'analyze', 'spider'],
       install_requires=[
             'pybluez',
             'pandas',
