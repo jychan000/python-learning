@@ -4,7 +4,6 @@ class UrlManager(object):
     def __init__(self):
         self.new_items = set() #用于判断是否需要爬取, 有进有出
         self.old_items = set() #用于判断是否需要爬取, 只进不出
-        # self.pending_items = set() #已爬去的skuid列表,全部用于后面抓去具体数据, 有进有出
 
     def add_new_item(self, new_item):
         len1 = 0
@@ -29,9 +28,8 @@ class UrlManager(object):
         return len(self.new_items) != 0
 
     def get_new_item(self):
-        new_item = self.new_items.pop() #从set中取出一个
+        new_item = self.new_items.pop()
         self.old_items.add(new_item)
-        # self.pending_items.add(new_item)
         return new_item
 
     def nums(self):

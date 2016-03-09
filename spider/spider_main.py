@@ -12,10 +12,10 @@ class SpiderMain(object):
         self.item_miner = item_miner.itemMiner() # item矿工,用来发现更多item
         self.running_time = 1 #运行时间(分钟)
 
-        self.item_queue = Queue.Queue(0)
-        self.paserA = spider_parser.SpiderParser("parserA", self.item_queue)
-        self.paserB = spider_parser.SpiderParser("parserB", self.item_queue)
-        self.paserC = spider_parser.SpiderParser("parserC", self.item_queue)
+        self.item_pending_queue = Queue.Queue(0)
+        self.paserA = spider_parser.SpiderParser("parserA", self.item_pending_queue)
+        self.paserB = spider_parser.SpiderParser("parserB", self.item_pending_queue)
+        self.paserC = spider_parser.SpiderParser("parserC", self.item_pending_queue)
         self.paserA.start()
         self.paserB.start()
         self.paserC.start()
@@ -23,7 +23,7 @@ class SpiderMain(object):
     def add_2_queue(self, items):
         if items is not None:
             for item in items:
-                self.item_queue.put(item)
+                self.item_pending_queue.put(item)
 
     # 开始爬之前的动作
     def pre_craw(self):
@@ -33,6 +33,7 @@ class SpiderMain(object):
 
     def craw(self):
         time_start = time.time()
+        run_time = 0
         while ((time.time() - time_start) / 60 < self.running_time):
 
             if not self.items.has_new_item():
@@ -45,11 +46,12 @@ class SpiderMain(object):
                 true_new_items = self.items.add_new_items(new_items)
                 self.add_2_queue(true_new_items)
 
-            print self.item_queue._qsize(), self.items.nums()
-            if self.item_queue.qsize() > 300:
+            print self.item_pending_queue._qsize(), self.items.nums()
+            if self.item_pending_queue.qsize() > 200:
                 #防止 items 量爆增
                 print "item_queue数量大于300, 暂停5秒中..."
                 time.sleep(5)
+
 
 
     def after_craw(self):

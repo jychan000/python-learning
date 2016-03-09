@@ -17,4 +17,5 @@ class SpiderParser(threading.Thread):
         while not self.queue.empty():
             item = self.queue.get()
             print self.name, item, self.queue.qsize()
+            time.sleep(1)
         print "SpiderParser end"
