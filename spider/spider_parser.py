@@ -13,11 +13,14 @@ class SpiderParser(object):
     def __init__(self):
         self.downloader = spider_downloader.SpiderDownloader()
 
-    def _get_product_info(self, skuid, html_cont):
+    def _get_product_info(self, item, html_cont):
+
+        platform, skuid = item.split("_")
         soup = BeautifulSoup(html_cont, "html.parser")
 
         product_info = {}
         product_info['skuid'] = skuid
+        product_info['platform'] = platform
 
         # 商品名称
         product_name = soup.find("div", id="itemInfo").find("div", id="name").h1.string
