@@ -49,7 +49,7 @@ class IncrManager(object):
         self.cursor_incr.execute(sql)
 
         self.count += 1
-        if self.count >= 10:
+        if self.count >= 20:
             self.conn.commit()
             self.count = 0
 

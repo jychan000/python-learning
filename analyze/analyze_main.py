@@ -17,7 +17,7 @@ class AnalyzeMain(object):
         return markXh, incrXh
 
 
-    def analyze_comments(self, comments):
+    def analyze_comments(self, skucomments):
         """
         处理某skuid的所有评论, 处理目的:
         1.计算出不同时间段内的增量情况
@@ -26,7 +26,7 @@ class AnalyzeMain(object):
         :return:
         """
 
-        skuid = None
+        skuid = skucomments[0]
         first_batch_time = None
         first_comment = None
 
@@ -45,9 +45,8 @@ class AnalyzeMain(object):
         mark72h = False
         markOrver72h = False
 
-        for comment in comments:
+        for comment in skucomments[1]:
 
-            skuid = comment[1]
             batch_time = comment[3]#爬取时间
             if batch_time == None:
                 continue
@@ -85,19 +84,12 @@ class AnalyzeMain(object):
         num = 0
 
         try:
-            while self.comments.has_next_sku():
-                comments = self.comments.get_one_sku_comments()
-                if comments == None:
-                    num_none += 1
-                else:
-                    num_not_none += 1
-                    try:
-                        #计算某skuid的评价情况
-                        skuid_incrs_str = self.analyze_comments(comments)
-                        #更新增量数据
-                        self.incr.upsert_incr(skuid_incrs_str);
-                    except Exception as e:
-                        print e
+            while self.comments.has_next():
+                skucomments = self.comments.next_comments()#<type 'tuple'> [0]skuid, [1]comments
+                skuid_incrs_str = self.analyze_comments(skucomments)
+                self.incr.upsert_incr(skuid_incrs_str)
+                num_not_none += 1
+
         except Exception as e:
             print e
         finally:
@@ -109,14 +101,15 @@ class AnalyzeMain(object):
 
 
 if __name__ == '__main__':
-    print "程序开始 ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print "-------- analyze --------"
+    print "[%s] 程序开始" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     start_time = time.time()
 
     analyzer = AnalyzeMain()
-    print "analyze初始化完成."
+    print "[%s] analyze初始化完成." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     analyzer.analyze()
 
     end_time = time.time()
-    print "程序结束 ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print "耗时:", (end_time - start_time), "秒"
+    print "[%s] 程序结束, 耗时:%.1f分钟" \
+          % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), (end_time - start_time) / 60)
 
