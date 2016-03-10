@@ -113,6 +113,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     analyzer = AnalyzeMain()
+    print "analyze初始化完成."
     analyzer.analyze()
 
     end_time = time.time()
