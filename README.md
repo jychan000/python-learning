@@ -8,6 +8,7 @@
 部署
 
 `sudo apt-get install libbluetooth-dev python-bluetooth`
+
 `python setup.py install`
 
 启动/停止 爬虫可使用脚本`spider.sh`
