@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
+import traceback
 
+import time
 from bs4 import BeautifulSoup
 from pandas.io import json
 
@@ -89,10 +91,14 @@ class SpiderParser(object):
             return None
 
         # 解析出 object
-        p_info = self._get_product_info(item, htmlcont_homepage)
-        p_price = self._get_product_price(htmlcont_price)
-        p_comments = self._get_product_comments(htmlcont_comments)
-        p_resee = self._get_resee(htmlcont_resee)
+        try:
+            p_info = self._get_product_info(item, htmlcont_homepage)
+            p_price = self._get_product_price(htmlcont_price)
+            p_comments = self._get_product_comments(htmlcont_comments)
+            p_resee = self._get_resee(htmlcont_resee)
+        except Exception as e:
+            print "[%s] item=%s, %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), item, e)
+            return None
 
         # 封装结果
         p_info['price_p'] = p_price['p'] # 现价
