@@ -30,7 +30,7 @@ class SpiderOutputer(object):
 
     # 写入商品信息表
     def update_insert_item(self, data):
-        sql = "replace into spider_jd_item(%s) " \
+        sql = "replace into spider_item(%s) " \
               "values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, %s, '%s', now(), %s)"
         sql_column = "skuid, platform, product_name, brand_id, " \
                      "category1, category2, category3, category4, " \
@@ -62,7 +62,7 @@ class SpiderOutputer(object):
         comment_info = data['CommentsCount'][0] #是一个字典类型
         sku_datetime = time.strftime("%Y%m%d-%H", time.localtime()) + "-" + str(comment_info['SkuId'])
 
-        sql = "replace into spider_jd_comment" \
+        sql = "replace into spider_snapshot" \
               "(sku_datetime, skuid, platform, crawl_time, price, price_cost, comment_count, good_count, " \
               "general_count, poor_count, good_rate, general_rate, poor_rate, " \
               "score1_count, score2_count, score3_count, score4_count, score5_count, average_score) " \

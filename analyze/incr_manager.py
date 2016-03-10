@@ -26,9 +26,9 @@ class IncrManager(object):
     def upsert_incr(self, skuid_incrs):
         # sql = "replace into analyze_comment_incr " \
         #       "(skuid, incr_3h, incr_6h, incr_12h, incr_24h, incr_48h, incr_72h, category1, category2, category3, category4, upsert_time) " \
-        #       "(select '%s', %s, %s, %s, %s, %s, %s, category1, category2, category3, category4, now() from spider_jd_item where skuid=%s) "
+        #       "(select '%s', %s, %s, %s, %s, %s, %s, category1, category2, category3, category4, now() from spider_item where skuid=%s) "
 
-        sql_item = "select category1, category2, category3, category4 from spider_jd_item where skuid=%s "
+        sql_item = "select category1, category2, category3, category4 from spider_item where skuid=%s "
         sql_item = sql_item % (skuid_incrs[0])
         self.cursor_item.execute(sql_item)
         sku_rs = self.cursor_item.fetchone()

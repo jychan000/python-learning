@@ -24,7 +24,7 @@ class CommentManager(object):
         )
 
         # -------- 先获取skuid再获取具体评论 --------
-        sql_select_item = "select distinct skuid from spider_jd_comment "
+        sql_select_item = "select distinct skuid from spider_snapshot "
         self.cursor_items = self.conn.cursor()
         num_items = self.cursor_items.execute(sql_select_item)
 
@@ -44,7 +44,6 @@ class CommentManager(object):
 
 
     def has_next(self):
-        # return self.cursor_items.rownumber < self.cursor_items.rowcount
         return len(self.comment_cache) > 0
 
     def __get_comments(self, skuids):
@@ -56,7 +55,7 @@ class CommentManager(object):
             skuids_str += (skuid[0] + ", ")
         skuids_str = skuids_str[:-2]
 
-        sql_comments = "select * from spider_jd_comment where skuid in (%s) order by skuid asc, crawl_time desc " % skuids_str
+        sql_comments = "select * from spider_snapshot where skuid in (%s) order by skuid asc, crawl_time desc " % skuids_str
         num_comments = self.cursor_comments.execute(sql_comments)
         if num_comments < 2:
             return None
@@ -86,22 +85,10 @@ class CommentManager(object):
                 self.comment_cache = commentCache
         return skucomments
 
-
-
-            # skuid = self.cursor_items.fetchone()[0]
-            # comments = None
-            # try:
-            #     comments = self.__get_comments_by_skuid(skuid)
-            # except Exception as e:
-            #     print e
-            # finally:
-            #     pass
-            # return comments
-
     def rm_old_comment(self, sku_datetime):
         if sku_datetime == None or sku_datetime == "":
             pass
-        sql_delete = "delete from spider_jd_comment where sku_datetime='%s'" % (sku_datetime)
+        sql_delete = "delete from spider_snapshot where sku_datetime='%s'" % (sku_datetime)
         self.cursor_rm.execute(sql_delete)
         self.rm_count += 1
         if self.rm_count >= 10:
