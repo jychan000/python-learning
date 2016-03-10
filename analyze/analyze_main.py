@@ -48,7 +48,7 @@ class AnalyzeMain(object):
         for comment in comments:
 
             skuid = comment[1]
-            batch_time = comment[2]#爬取时间
+            batch_time = comment[3]#爬取时间
             if batch_time == None:
                 continue
             if first_batch_time == None:
@@ -60,7 +60,7 @@ class AnalyzeMain(object):
                 date_offset = (first_batch_time - batch_time)
                 time_offset = date_offset.days * 24 + (date_offset.seconds / 3600)
                 # 评论增加量
-                incr = first_comment[3] - comment[3]
+                incr = first_comment[6] - comment[6]
 
                 mark3h,  incr3h  = self.__incr(mark3h,  incr3h,  time_offset, incr, 3)
                 mark6h,  incr6h  = self.__incr(mark6h,  incr6h,  time_offset, incr, 6)
