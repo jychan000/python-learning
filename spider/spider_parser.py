@@ -93,12 +93,24 @@ class SpiderParser(object):
         htmlcont_resee = htmlcont_resee.decode('gbk', 'ignore')
 
         # 解析出 object
+        index = 1
         try:
             p_info = self._get_product_info(item, htmlcont_homepage)
+            index += 1
             p_price = self._get_product_price(htmlcont_price)
+            index += 1
             p_comments = self._get_product_comments(htmlcont_comments)
+            index += 1
             p_resee = self._get_resee(htmlcont_resee)
         except Exception as e:
+            if index == 1:
+                print "spider_parser.parse()._get_product_info()"
+            if index == 2:
+                print "spider_parser.parse()._get_product_price()"
+            if index == 3:
+                print "spider_parser.parse()._get_product_comments()"
+            if index == 4:
+                print "spider_parser.parse()._get_resee()"
             print "[%s] item=%s, %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), item, e)
             return None
 

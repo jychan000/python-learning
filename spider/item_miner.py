@@ -24,7 +24,7 @@ class itemMiner(object):
             for datae in obj_items['data']:
                 new_items.add(platform + "_" + str(datae['sku']))
         except Exception as e:
-            print "itemMiner mining faild."
+            print "itemMiner mining faild. url=", url
             print e
             exstr = traceback.format_exc()
             print exstr
