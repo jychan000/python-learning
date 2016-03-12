@@ -2,6 +2,7 @@
 import time
 
 import datetime
+import traceback
 
 from analyze import comment_manager, incr_manager
 
@@ -12,81 +13,42 @@ class AnalyzeMain(object):
         self.comments = comment_manager.CommentManager()
         self.incr = incr_manager.IncrManager()
 
-    def __incr(self, markXh, incrXh, time_offset, incr, n): #(mark[0], incrs[0], time_offset, incr, 3)
+    def __incr(self, markXh, incrXh, time_offset, incr, n):  # (mark[0], incrs[0], time_offset, incr, 3)
         if not markXh and time_offset >= n:
             incrXh = incr * n / time_offset
             return True, incrXh
         return markXh, incrXh
 
-
-    def price_decr(self, sku_snapshots):
-        print "计算降价幅度"
-        # 记录1日, 2日, 3日, 7日, 15日, 30日 价格与当前价格的差距,可为正负值,每天取最低价
-        # 当天最高价,当天最低价
-        # 昨天最高价,昨天最低价
-
-        # 这个应该从旧数据中获取
-        # [当日最高, 当日最低, 昨日最高, 昨日最低, 1日降幅, 2日降幅, 3日降幅, 7日降幅, 15日降幅, 30日降幅]
-        price_info = [0, 999999, 0, 999999, 0, 0, 0, 0, 0, 0]
-
-        skuid = sku_snapshots[0]
-        snapshots = sku_snapshots[1]
-
-        today = datetime.datetime.now()
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-
-        for snapshot in snapshots:
-            crawltime = snapshot[3]
-            price = snapshot[4]
-
-            if crawltime is None or price is None:
-                continue
-
-            # 1.判断是否今天
-            if today.year == crawltime.year and today.month == crawltime.month and today.day == crawltime.day:
-                # 更新当日,最高价/最低价
-                if price_info[0] < price:
-                    price_info[0] = price
-                if price_info[1] > price:
-                    price_info[1] = price
-
-            # 2.判断是否昨天
-            if yesterday.year == crawltime.year and yesterday.month == crawltime.month and yesterday.day == crawltime.day:
-                # 更新昨日,最高价/最低价
-                if price_info[3] < price:
-                    price_info[3] = price
-                if price_info[4] > price:
-                    price_info[4] = price
-
-
-        return None
-
-
-
     def analyze_snapshot(self, skusnapshots):
-        # price_decr = self.price_decr(skusnapshots)
-
         skuid = skusnapshots[0]
         comments = skusnapshots[1]
         today = datetime.datetime.now()
 
+        # ---- 用于计算评价数量 ----
         # 标记是否获取 [3h, 6h, 12h, 24h, 48h, 72h, over72h]
         mark = [False, False, False, False, False, False, False]
         # 标记评价数增量 [3h, 6h, 12h, 24h, 48h, 72h]
-        incrs = [0l, 0l, 0l, 0l, 0l, 0l]
+        comIncrs = [0l, 0l, 0l, 0l, 0l, 0l]
         # 标记第一条记录的时间
         first_batch_time = None
         first_comment = None
 
+        # ---- 用于计算价格增量 ----
+        # 价格降幅 [1日, 2日, 3日, 7日, 10日, 15日]
+        priceIncrs = [None, None, None, None, None, None]
+        first_price = None
+        first_price_date = None
+
         for comment in comments:
-            batch_time = comment[3]#批次爬取时间
-            if batch_time == None:
+            batch_time = comment[3]  # 批次爬取时间
+            if batch_time is None:
                 continue
 
-            if first_batch_time == None:
-                #如果最新的记录非当天,则停止,把全部增量设置为0  --------暂时不起用
-                # if today.year != batch_time.year and today.month != batch_time.month and today.day != batch_time.day:
-                #     break
+            price = comment[4]
+            if first_price is None:
+                first_price = price
+                first_price_date = datetime.datetime.combine(batch_time, datetime.time.min)  # 某天零时
+            if first_batch_time is None:
                 first_batch_time = batch_time
                 first_comment = comment
             else:
@@ -94,21 +56,59 @@ class AnalyzeMain(object):
                 time_offset = date_offset.days * 24 + (date_offset.seconds / 3600)
                 incr = first_comment[6] - comment[6]
 
-                mark[0], incrs[0] = self.__incr(mark[0], incrs[0], time_offset, incr, 3)
-                mark[1], incrs[1] = self.__incr(mark[1], incrs[1], time_offset, incr, 6)
-                mark[2], incrs[2] = self.__incr(mark[2], incrs[2], time_offset, incr, 12)
-                mark[3], incrs[3] = self.__incr(mark[3], incrs[3], time_offset, incr, 24)
-                mark[4], incrs[4] = self.__incr(mark[4], incrs[4], time_offset, incr, 48)
-                mark[5], incrs[5] = self.__incr(mark[5], incrs[5], time_offset, incr, 72)
+                mark[0], comIncrs[0] = self.__incr(mark[0], comIncrs[0], time_offset, incr, 3)
+                mark[1], comIncrs[1] = self.__incr(mark[1], comIncrs[1], time_offset, incr, 6)
+                mark[2], comIncrs[2] = self.__incr(mark[2], comIncrs[2], time_offset, incr, 12)
+                mark[3], comIncrs[3] = self.__incr(mark[3], comIncrs[3], time_offset, incr, 24)
+                mark[4], comIncrs[4] = self.__incr(mark[4], comIncrs[4], time_offset, incr, 48)
+                mark[5], comIncrs[5] = self.__incr(mark[5], comIncrs[5], time_offset, incr, 72)
 
-                if mark[6]: # over72h
+                # 计算价格增量
+                if first_price is not None and price is not None:
+                    # 偏移天数 如:first:9号, batch:3, day_offset=6 相差6日
+                    tmp_batch_time = datetime.datetime.combine(batch_time, datetime.time.min)  # 某天零时
+                    day_offset = first_price_date.day - tmp_batch_time.day
+
+                    # day_offset -> index for priceIncrs[]
+                    if 0 < day_offset <= 3:
+                        index = day_offset - 1
+                    elif 3 < day_offset <= 7:
+                        index = 3
+                    elif 7 < day_offset <= 10:
+                        index = 4
+                    elif 10 < day_offset <= 15:
+                        index = 5
+                    else:
+                        index = None
+
+                    if index is not None:
+                        price_incr = first_price - price  # 正数涨价,负数降价
+                        if priceIncrs[index] is None:
+                            priceIncrs[index] = price_incr
+                        else:
+                            if price_incr < priceIncrs[index]:
+                                priceIncrs[index] = price_incr  # 按当天最低价计算
+
+                if mark[6] and date_offset.days > 15:  # 数据保留15天,以后改为配置
                     sku_datetime = comment[0]
-                    #删除该记录
+                    # 删除该记录
                     self.comments.rm_old_comment(sku_datetime)
-                if mark[5]: # 72h
+                if mark[5]:  # 72h
                     mark[6] = True
-        return skuid, str(incrs[0]), str(incrs[1]), str(incrs[2]), str(incrs[3]), str(incrs[4]), str(incrs[5])
 
+        # 修正价格变化
+        for i in range((len(priceIncrs) - 1), -1, -1):
+            if priceIncrs[i] is None:
+                priceIncrs[i] = 0
+            elif i > 0:
+                for j in range(i-1, -1, -1):
+                    if priceIncrs[j] is None:
+                        priceIncrs[j] = priceIncrs[i]
+                    else:
+                        break
+        # 封装评价增量对象
+        comStrIncrs = [str(comIncrs[0]), str(comIncrs[1]), str(comIncrs[2]), str(comIncrs[3]), str(comIncrs[4]), str(comIncrs[5])]
+        return skuid, priceIncrs, comStrIncrs
 
     def analyze(self):
         num_none = 0
@@ -117,14 +117,18 @@ class AnalyzeMain(object):
 
         try:
             while self.comments.has_next():
-                skusnapshots = self.comments.next_comments()#<type 'tuple'> [0]skuid, [1]comments
-                skucomments_incrs = self.analyze_snapshot(skusnapshots)
-                # print skucomments_incrs
-                self.incr.upsert_incr(skucomments_incrs)
-                num_not_none += 1
+                skusnapshots = self.comments.next_comments()  # <type 'tuple'> [0]skuid, [1]comments
+                skuid, comStrIncrs, priceIncrs = self.analyze_snapshot(skusnapshots)
+                rs = self.incr.upsert_incr(skuid, comStrIncrs, priceIncrs)
+                if rs:
+                    num_not_none += 1
+                else:
+                    num_none += 1
 
         except Exception as e:
             print e
+            exstr = traceback.format_exc()
+            print exstr
         finally:
             self.incr.close()
             self.comments.commit_close()

@@ -83,12 +83,14 @@ class SpiderParser(object):
             return None
 
         # 获取正文
-        htmlcont_homepage = self.downloader.get_html_cont(url_homepage).decode('gbk', 'ignore')
+        htmlcont_homepage = self.downloader.get_html_cont(url_homepage)
         htmlcont_comments = self.downloader.get_html_cont(url_comment)
         htmlcont_price = self.downloader.get_html_cont(url_price)
-        htmlcont_resee = self.downloader.get_html_cont(url_resee).decode('gbk', 'ignore')
+        htmlcont_resee = self.downloader.get_html_cont(url_resee)
         if htmlcont_homepage is None or htmlcont_comments is None or htmlcont_price is None or htmlcont_resee is None:
             return None
+        htmlcont_homepage = htmlcont_homepage.decode('gbk', 'ignore')
+        htmlcont_resee = htmlcont_resee.decode('gbk', 'ignore')
 
         # 解析出 object
         try:

@@ -23,35 +23,41 @@ class IncrManager(object):
 
         self.count = 0
 
-    def upsert_incr(self, skuid_incrs):
-        # sql = "replace into analyze_comment_incr " \
-        #       "(skuid, incr_3h, incr_6h, incr_12h, incr_24h, incr_48h, incr_72h, category1, category2, category3, category4, upsert_time) " \
-        #       "(select '%s', %s, %s, %s, %s, %s, %s, category1, category2, category3, category4, now() from spider_item where skuid=%s) "
+    def upsert_incr(self, skuid, comStrIncrs, priceIncrs):
 
-        sql_item = "select category1, category2, category3, category4 from spider_item where skuid=%s "
-        sql_item = sql_item % (skuid_incrs[0])
+        # 获取分类信息
+        sql_item = "select category1, category2, category3, category4 from spider_item where skuid=%s " % (skuid)
         self.cursor_item.execute(sql_item)
-        sku_rs = self.cursor_item.fetchone()
-        if sku_rs == None:
-            sku_rs = ['', '', '', '']
+        categorys = self.cursor_item.fetchone()
+        if categorys is None:
+            return False
 
         sql = "replace into analyze_comment_incr " \
-              "(skuid, incr_3h, incr_6h, incr_12h, incr_24h, incr_48h, incr_72h, category1, category2, category3, category4, upsert_time) " \
-              "values ('%s', %s, %s, %s, %s, %s, %s, '%s', '%s', '%s', '%s', now()) "
-        list_incrs = list(skuid_incrs)
-        list_incrs.append(sku_rs[0])
-        list_incrs.append(sku_rs[1])
-        list_incrs.append(sku_rs[2])
-        list_incrs.append(sku_rs[3])
+              "(skuid, " \
+              "incr_3h, incr_6h, incr_12h, incr_24h, incr_48h, incr_72h, " \
+              "price_incr_1d, price_incr_2d, price_incr_3d, price_incr_7d, price_incr_10d, price_incr_15d, " \
+              "category1, category2, category3, category4, upsert_time) " \
+              "values ('%s', %s, %s, %s, %s, %s, %s, " \
+              "%f, %f, %f, %f, %f, %f, " \
+              "'%s', '%s', '%s', '%s', now()) "
 
-        skuid_incrs = tuple(list_incrs)
-        sql = sql % (skuid_incrs)
+        list_incrs = list()
+        list_incrs.append(skuid)
+        for ele in comStrIncrs:
+            list_incrs.append(ele)
+        for ele in priceIncrs:
+            list_incrs.append(float(ele))
+        for ele in categorys:
+            list_incrs.append(ele)
+
+        sql = sql % (tuple(list_incrs))
         self.cursor_incr.execute(sql)
 
         self.count += 1
         if self.count >= 20:
             self.conn.commit()
             self.count = 0
+        return True
 
     def close(self):
         self.conn.commit()
