@@ -30,7 +30,7 @@ class SpiderMain(object):
 
     # 开始爬之前的动作
     def pre_craw(self):
-        target_items = ["jd_1783428386", "jd_1413825", "jd_2141606", "tb_123456", "vip_123456"]
+        target_items = ["jd_549056", "jd_1783428386", "jd_1413825", "jd_2141606", "tb_123456", "vip_123456"]
         true_new_items = self.items.add_new_items(target_items)
         self.add_2_queue(true_new_items)
 
