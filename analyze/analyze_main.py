@@ -108,7 +108,7 @@ class AnalyzeMain(object):
                         break
         # 封装评价增量对象
         comStrIncrs = [str(comIncrs[0]), str(comIncrs[1]), str(comIncrs[2]), str(comIncrs[3]), str(comIncrs[4]), str(comIncrs[5])]
-        return skuid, priceIncrs, comStrIncrs
+        return skuid, comStrIncrs, priceIncrs
 
     def analyze(self):
         num_none = 0
