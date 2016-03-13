@@ -19,7 +19,10 @@ class itemMiner(object):
 
         new_items = set()
         try:
-            html_cont = SpiderDownloader.get_html_cont(url).decode('gbk', 'ignore')
+            urlback, html_cont = SpiderDownloader.get_html_cont(url)
+            html_cont = html_cont.decode('gbk', 'ignore')
+
+
             obj_items = json.loads(html_cont)
             for datae in obj_items['data']:
                 new_items.add(platform + "_" + str(datae['sku']))

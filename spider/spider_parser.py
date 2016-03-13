@@ -86,14 +86,19 @@ class SpiderParser(object):
             return None
 
         # 获取正文
-        htmlcont_homepage = self.downloader.get_html_cont(url_homepage)
-        htmlcont_comments = self.downloader.get_html_cont(url_comment)
-        htmlcont_price = self.downloader.get_html_cont(url_price)
-        htmlcont_resee = self.downloader.get_html_cont(url_resee)
+        urlback_homepage, htmlcont_homepage = self.downloader.get_html_cont(url_homepage)
+        urlback_comments, htmlcont_comments = self.downloader.get_html_cont(url_comment)
+        urlback_price, htmlcont_price = self.downloader.get_html_cont(url_price)
+        urlback_resee, htmlcont_resee = self.downloader.get_html_cont(url_resee)
         if htmlcont_homepage is None or htmlcont_comments is None or htmlcont_price is None or htmlcont_resee is None:
             return None
         htmlcont_homepage = htmlcont_homepage.decode('gbk', 'ignore')
         htmlcont_resee = htmlcont_resee.decode('gbk', 'ignore')
+
+        #判断是否全球购商品
+        if urlback_homepage is None or urlback_homepage.find('item.jd.hk') != -1:
+            print "[%s] item=%s 全球购商品,暂不处理." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), item)
+            return None
 
         # 解析出 object
         index = 1
@@ -107,7 +112,7 @@ class SpiderParser(object):
             p_resee = self._get_resee(htmlcont_resee)
         except Exception as e:
             if index == 1:
-                print "spider_parser.parse()._get_product_info(), 可能属于全球购商品"
+                print "spider_parser.parse()._get_product_info()"
             if index == 2:
                 print "spider_parser.parse()._get_product_price()"
                 print "url:%s, html:%s" % (url_price, htmlcont_price)
