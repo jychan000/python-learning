@@ -107,6 +107,7 @@ class SpiderParser(object):
                 print "spider_parser.parse()._get_product_info()"
             if index == 2:
                 print "spider_parser.parse()._get_product_price()"
+                print htmlcont_price
             if index == 3:
                 print "spider_parser.parse()._get_product_comments()"
             if index == 4:
