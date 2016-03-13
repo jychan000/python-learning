@@ -73,6 +73,10 @@ class SpiderParser(object):
         return new_items
 
     def parse(self, item):
+        # if item == "jd_1757862459" or item == "jd_1705471266" or item == "jd_1143324098" or item == "jd_1705471262" or item == "jd_1760490092":
+        #     print "jd_1757862459"
+        # 类似这些sku会转发到全球购 http://item.jd.hk/1705471266.html
+
         # 获取 url
         url_homepage = ConfigCenter.url_homepage(item)
         url_comment = ConfigCenter.url_comment(item)
@@ -103,7 +107,7 @@ class SpiderParser(object):
             p_resee = self._get_resee(htmlcont_resee)
         except Exception as e:
             if index == 1:
-                print "spider_parser.parse()._get_product_info()"
+                print "spider_parser.parse()._get_product_info(), 可能属于全球购商品"
             if index == 2:
                 print "spider_parser.parse()._get_product_price()"
                 print "url:%s, html:%s" % (url_price, htmlcont_price)
