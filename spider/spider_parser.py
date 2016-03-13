@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import traceback
 
 import time
 from bs4 import BeautifulSoup
@@ -107,15 +106,14 @@ class SpiderParser(object):
                 print "spider_parser.parse()._get_product_info()"
             if index == 2:
                 print "spider_parser.parse()._get_product_price()"
-                print "url: ", url_price
-                print "html: ", htmlcont_price
+                print "url:%s, html:%s" % (url_price, htmlcont_price)
             if index == 3:
                 print "spider_parser.parse()._get_product_comments()"
             if index == 4:
                 print "spider_parser.parse()._get_resee()"
             print "[%s] item=%s, %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), item, e)
-            exstr = traceback.format_exc()
-            print exstr
+            # exstr = traceback.format_exc()
+            # print exstr
             return None
 
         # 封装结果
