@@ -112,6 +112,8 @@ class SpiderParser(object):
             if index == 4:
                 print "spider_parser.parse()._get_resee()"
             print "[%s] item=%s, %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), item, e)
+            exstr = traceback.format_exc()
+            print exstr
             return None
 
         # 封装结果
