@@ -12,7 +12,8 @@ url_price_jd = "http://p.3.cn/prices/get?skuid=J_%s"
 url_price_tb = ""
 url_price_vip = ""
 
-url_resee_jd = "http://diviner.jd.com/diviner?lid=19&lim=8&uuid=0&p=105000&sku=%s"
+#url_resee_jd = "http://diviner.jd.com/diviner?lid=19&lim=8&uuid=0&p=105000&sku=%s"
+url_resee_jd = "http://diviner.jd.com/diviner?lid=19&lim=6&uuid=1047138762&pin=&p=102001&sku=%s&ck=pin,ipLocation,atw,aview&c1=1316&c2=1381&c3=1391"
 url_resee_tb = ""
 url_resee_vip = ""
 
@@ -94,6 +95,7 @@ class SpiderConfig(object):
         cf.read("spider.ini")
 
         self.runtime = int(cf.get("baseconf", "runtime"))
+        # self.firsttarget = int(cf.get("baseconf", "runtime"))
 
 if __name__ == '__main__':
     c1 = SpiderConfig()
@@ -101,3 +103,4 @@ if __name__ == '__main__':
     print c1.runtime
     c1.a = 7
     print c2.runtime
+
