@@ -24,6 +24,7 @@ CREATE TABLE `spider_item` (
   PRIMARY KEY (`skuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+
 CREATE TABLE `spider_snapshot` (
   `sku_datetime` varchar(60) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'skuid_时间小时',
   `skuid` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '商品skuid',
@@ -46,6 +47,7 @@ CREATE TABLE `spider_snapshot` (
   `average_score` int(11) DEFAULT NULL COMMENT '平均分',
   PRIMARY KEY (`sku_datetime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='爬虫数据快照信息';
+
 
 CREATE TABLE `analyze_comment_incr` (
   `skuid` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
