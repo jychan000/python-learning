@@ -27,7 +27,9 @@ start() {
         echo "pid:$!"
         cd ..
     else
-        echo "alread start. PID:`cat pid-spider.log`"
+        echo "alread start. PID:`cat pid-spider.log`, now stop it and start"
+        stop
+        start
         exit 0
     fi
 }
