@@ -80,7 +80,7 @@ class IncrManager(object):
         self.conn.commit()
 
         # 删除评价数量小于1000的分析结果
-        sql_clean2 = "delete from analyze_comment_incr a where  a.comment_count <= 2000 or (a.incr_24h/a.comment_count > 0.4 and a.comment_count > 10000)"
+        sql_clean2 = "delete from analyze_comment_incr a where comment_count <= 2000 or (incr_24h/comment_count > 0.4 and comment_count > 10000)"
         rs_clean2 = self.cursor_clean.execute(sql_clean2)
         self.conn.commit()
 
