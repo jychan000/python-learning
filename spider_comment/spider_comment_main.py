@@ -13,8 +13,8 @@ class spider_comment_main(object):
         self.comment_dictionary = dict()
         index = 0
         for skuid in skuid_list:
-            if index >= 100:
-                break
+            # if index >= 100:
+            #     break
             self.spiderDownloader.getComments(skuid)
             index += 1
         self.connectManager.commit_close()

@@ -25,6 +25,8 @@ class CommentManager(object):
 
         self.cursor_items = self.conn.cursor()
 
+        self.index = 0
+
     def getSkuidList(self):
         skuid_list = []
         # -------- 获取所有skuid --------
@@ -53,7 +55,11 @@ class CommentManager(object):
         )
         # print sql
         self.cursor_items.execute(sql)
-        self.conn.commit()
+
+        self.index += 1
+        if self.index >= 20:
+            self.conn.commit()
+            self.index = 0
 
     def commit_close(self):
         self.conn.commit()

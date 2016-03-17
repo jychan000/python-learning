@@ -29,26 +29,36 @@ class SpiderDownloader:
 
     def getComments(self, item_str):
         page = 0
+        page_faild = 0
+
         nextPage = True
         print 'crawing skuid:', item_str
+
+
         while (nextPage):
             # time.sleep(1)
             url = "http://club.jd.com/productpage/p-%s-s-0-t-3-p-%s.html" % (item_str, page)
             html_cont = self.get_html_cont(url).decode('GBK', 'ignore').encode('UTF-8')
             # sec = random.randint(1, 2) # 随机延时1~2秒，防止被Ban
             # time.sleep(sec)
+
+            if (page - page_faild) >= 15 or page_faild > 20:
+                break
+
             if html_cont == '':
                 print 'sleep 8 seconds for url %s' % (url)
                 # time.sleep(3)
-                page = page + 1
+                page += 1
+                page_faild += 1
                 continue
-
 
             product_comments = json.loads(html_cont)
             comments = product_comments["comments"]
             if comments:
                 # print page
                 page = page + 1
+
+
                 for comment in comments:
                     content = comment['content']
                     commentId = comment['id']
@@ -58,9 +68,10 @@ class SpiderDownloader:
                     else:
                         self.comment_id_set.add(commentId)
                     # 简单过滤掉太短的评论
-                    # if len(content) < 4:
-                    #     continue
+                    if len(content) < 4:
+                        continue
                     skuid = comment['referenceId']
+
                     try:
                         self.connectManager.insert_comment(comment)
                     except Exception as e:
