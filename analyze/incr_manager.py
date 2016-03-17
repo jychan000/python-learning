@@ -59,10 +59,28 @@ class IncrManager(object):
             self.count = 0
         return True
 
+
+
     def close(self):
         self.conn.commit()
         self.cursor_item.close()
         self.cursor_incr.close()
         self.conn.close()
+
+    def clean(self):
+        self.conn.commit()
+
+        self.cursor_clean = self.conn.cursor()
+        sql_clean = "delete from analyze_comment_incr where category3 in ( " \
+              "select category3 from " \
+              "(select count(*) as category3_count, category3 from analyze_comment_incr group by category3 order by category3_count)b " \
+              "where category3_count <=5 order by category3 desc) "
+
+        rs_clean = self.cursor_clean.execute(sql_clean)
+        self.conn.commit()
+        self.cursor_clean.close()
+
+        return rs_clean
+
 
 

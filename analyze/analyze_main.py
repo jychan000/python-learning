@@ -130,12 +130,16 @@ class AnalyzeMain(object):
             exstr = traceback.format_exc()
             print exstr
         finally:
-            self.incr.close()
+            # self.incr.close() #留在后面
             self.comments.commit_close()
 
         print "None :", num_none
         print "not None :", num_not_none
 
+    def clean(self):
+        cleannum = self.incr.clean()
+        print "[%s] 清除sku数量:%d" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), cleannum)
+        self.incr.close()
 
 if __name__ == '__main__':
     print "-------- analyze --------"
@@ -144,9 +148,18 @@ if __name__ == '__main__':
 
     analyzer = AnalyzeMain()
     print "[%s] analyze初始化完成." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-    analyzer.analyze()
+    # analyzer.analyze()
 
     end_time = time.time()
-    print "[%s] 程序结束, 耗时:%.1f分钟" \
+    print "[%s] 分析结束, 耗时:%.1f分钟" \
           % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), (end_time - start_time) / 60)
+
+    print "[%s] 开始清除一些无价值数据" % (time.strftime("%Y-%m-%d %H:%M:%S"))
+    analyzer.clean()
+    end_time2 = time.time()
+    print "[%s] 清除结束, 耗时:%.1f分钟" \
+          % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), (end_time2 - end_time) / 60)
+
+
+
 
