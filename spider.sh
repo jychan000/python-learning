@@ -28,9 +28,19 @@ start() {
         cd ..
     else
         echo "alread start. PID:`cat pid-spider.log`, now stop it and start"
-        stop
-        start
-        exit 0
+
+        pid=`cat pid-spider.log`
+        echo "Kill pid:$pid"
+        kill -9 $pid
+        rm pid-spider.log
+
+        #把终端输出的内容写到 console-spider.log  文件
+        cd spider
+        python spider_main.py >> ../console-spider.log &
+        #把进程号pid写到 pid-spider.log文件
+        echo $! > ../pid-spider.log
+        echo "pid:$!"
+        cd ..
     fi
 }
 
