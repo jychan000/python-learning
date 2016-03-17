@@ -148,7 +148,7 @@ if __name__ == '__main__':
 
     analyzer = AnalyzeMain()
     print "[%s] analyze初始化完成." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-    # analyzer.analyze()
+    analyzer.analyze()
 
     end_time = time.time()
     print "[%s] 分析结束, 耗时:%.1f分钟" \
