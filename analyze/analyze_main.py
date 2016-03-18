@@ -2,9 +2,7 @@
 import time
 
 import traceback
-
 import sys
-
 from analyze import comment_manager, incr_manager, analyze_center
 
 reload(sys)
@@ -15,6 +13,7 @@ class AnalyzeMain(object):
     def __init__(self):
         self.snapshots = comment_manager.CommentManager()
         self.incr = incr_manager.IncrManager()
+        self.analyzer = analyze_center.Analyzer()
 
     def analyze(self):
         num_none = 0
@@ -25,7 +24,7 @@ class AnalyzeMain(object):
             while self.snapshots.has_next():
                 skusnapshots = self.snapshots.next_comments()  # <type 'tuple'> [0]skuid, [1]comments
 
-                skuid, comment_count, comment_incrs, price_incrs, outdate_comments = analyze_center.Analyzer.analyze_snapshot(skusnapshots)
+                skuid, comment_count, comment_incrs, price_incrs, outdate_comments = self.analyzer.analyze_snapshot(skusnapshots)
                 self.snapshots.rm_outdate_comment(outdate_comments)
                 useful = analyze_center.Analyzer.filter(skuid, comment_count, comment_incrs, price_incrs)
                 if useful:
