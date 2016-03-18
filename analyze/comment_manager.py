@@ -85,14 +85,16 @@ class CommentManager(object):
                 self.comment_cache = commentCache
         return skucomments
 
-    def rm_old_comment(self, sku_datetime):
-        if sku_datetime == None or sku_datetime == "":
-            pass
-        sql_delete = "delete from spider_snapshot where sku_datetime='%s'" % (sku_datetime)
-        self.cursor_rm.execute(sql_delete)
-        self.rm_count += 1
+    # 删除过时的快照
+    def rm_outdate_comment(self, outdate_comments):
+        for outdate_comment in outdate_comments:
+            if outdate_comment is not None and outdate_comment != "":
+                sql_delete = "delete from spider_snapshot where sku_datetime='%s'" % (outdate_comment)
+                self.cursor_rm.execute(sql_delete)
+                self.rm_count += 1
         if self.rm_count >= 10:
             self.conn.commit()
+            self.rm_count = 0
 
     def commit_close(self):
         self.conn.commit()

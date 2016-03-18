@@ -59,8 +59,6 @@ class IncrManager(object):
             self.count = 0
         return True
 
-
-
     def close(self):
         self.conn.commit()
         self.cursor_item.close()
@@ -72,20 +70,15 @@ class IncrManager(object):
         self.cursor_clean = self.conn.cursor()
 
         # 删除类别下商品数量小于5个的分析结果
-        sql_clean1 = "delete from analyze_comment_incr where category3 in ( " \
+        sql_clean = "delete from analyze_comment_incr where category3 in ( " \
               "select category3 from " \
               "(select count(*) as category3_count, category3 from analyze_comment_incr group by category3 order by category3_count)b " \
               "where category3_count <=5 order by category3 desc) "
-        rs_clean = self.cursor_clean.execute(sql_clean1)
-        self.conn.commit()
-
-        # 删除评价数量小于1000的分析结果
-        sql_clean2 = "delete from analyze_comment_incr where comment_count <= 2000 or (incr_24h/comment_count > 0.4 and comment_count > 10000)"
-        rs_clean2 = self.cursor_clean.execute(sql_clean2)
+        rs_clean = self.cursor_clean.execute(sql_clean)
         self.conn.commit()
 
         self.cursor_clean.close()
-        return (rs_clean + rs_clean2)
+        return rs_clean
 
 
 
