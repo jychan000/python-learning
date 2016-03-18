@@ -2,7 +2,7 @@
 import time
 
 import traceback
-from analyze import comment_manager, incr_manager, analyze_center
+from analyze import comment_manager, incr_manager, analyze_worker
 
 # reload(sys)
 # sys.setdefaultencoding('utf8')
@@ -12,7 +12,7 @@ class AnalyzeMain(object):
     def __init__(self):
         self.snapshots = comment_manager.CommentManager()
         self.incr = incr_manager.IncrManager()
-        self.analyzer = analyze_center.Analyzer()
+        self.analyzer = analyze_worker.Analyzer()
 
     def analyze(self):
         num_none = 0
