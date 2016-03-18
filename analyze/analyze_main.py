@@ -26,7 +26,7 @@ class AnalyzeMain(object):
 
                 skuid, comment_count, comment_incrs, price_incrs, outdate_comments = self.analyzer.analyze_snapshot(skusnapshots)
                 self.snapshots.rm_outdate_comment(outdate_comments)
-                useful = analyze_center.Analyzer.filter(skuid, comment_count, comment_incrs, price_incrs)
+                useful = self.analyzer.filter(skuid, comment_count, comment_incrs, price_incrs)
                 if useful:
                     rs = self.incr.upsert_incr(skuid, comment_incrs, price_incrs)
                     if rs:
