@@ -5,8 +5,7 @@ import traceback
 
 import sys
 
-from analyze import comment_manager, incr_manager
-from analyze.analyze_center import Analyzer
+from analyze import comment_manager, incr_manager, analyze_center
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -26,9 +25,9 @@ class AnalyzeMain(object):
             while self.snapshots.has_next():
                 skusnapshots = self.snapshots.next_comments()  # <type 'tuple'> [0]skuid, [1]comments
 
-                skuid, comment_count, comment_incrs, price_incrs, outdate_comments = Analyzer.analyze_snapshot(skusnapshots)
+                skuid, comment_count, comment_incrs, price_incrs, outdate_comments = analyze_center.Analyzer.analyze_snapshot(skusnapshots)
                 self.snapshots.rm_outdate_comment(outdate_comments)
-                useful = Analyzer.filter(skuid, comment_count, comment_incrs, price_incrs)
+                useful = analyze_center.Analyzer.filter(skuid, comment_count, comment_incrs, price_incrs)
                 if useful:
                     rs = self.incr.upsert_incr(skuid, comment_incrs, price_incrs)
                     if rs:
