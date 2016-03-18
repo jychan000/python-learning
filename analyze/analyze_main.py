@@ -2,11 +2,10 @@
 import time
 
 import traceback
-import sys
 from analyze import comment_manager, incr_manager, analyze_center
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+# reload(sys)
+# sys.setdefaultencoding('utf8')
 
 class AnalyzeMain(object):
 
