@@ -12,12 +12,27 @@ class Analyzer(object):
             return False
 
         #增长率异常
-        if ((float(comment_incrs[3]) / comment_count > 0.4) and (comment_count >= 10000))\
-                or ((float(comment_incrs[4]) / comment_count > 0.4) and (comment_count >= 10000))\
-                or ((float(comment_incrs[5]) / comment_count > 0.4) and (comment_count >= 10000)):
-            # print "[%s] 过滤怀疑造假数据:skuid=%s, commentcount=%d, incr24h=%s, incr48h=%s, incr72h=%s " \
-            #       % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), skuid, comment_count, comment_incrs[3], comment_incrs[4], comment_incrs[5])
+        incr_24h = long(comment_incrs[3])  # 24小时增量
+        incr_48h = long(comment_incrs[4])  # 48小时增量
+        incr_72h = long(comment_incrs[5])  # 72小时增量
+        count_24h = comment_count - incr_24h  # 24小时前数量
+        count_48h = comment_count - incr_48h  # 48小时前数量
+        count_72h = comment_count - incr_72h  # 72小时前数量
+
+        if (float(incr_24h) / count_24h > 0.3) and (comment_count >= 10000):
             return False
+        if (float(incr_48h) / count_48h > 0.3) and (comment_count >= 10000):
+            return False
+        if (float(incr_72h) / count_72h > 0.3) and (comment_count >= 10000):
+            return False
+
+        if (float(incr_24h) / count_24h > 0.17) and (comment_count >= 100000):
+            return False
+        if (float(incr_48h) / count_48h > 0.17) and (comment_count >= 100000):
+            return False
+        if (float(incr_72h) / count_72h > 0.17) and (comment_count >= 100000):
+            return False
+
         return True
 
     def getincr(self, markXh, incrXh, time_offset, incr, n):  # (mark[0], incrs[0], time_offset, incr, 3)
