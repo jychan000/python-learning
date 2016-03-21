@@ -6,7 +6,7 @@ import time
 import MySQLdb
 
 
-class CommentManager(object):
+class DbManager(object):
     def __init__(self):
         cf = ConfigParser.ConfigParser()
         path = os.path.dirname(os.path.abspath("db_config.ini"))

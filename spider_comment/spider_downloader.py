@@ -2,20 +2,17 @@
 # -*- coding: utf-8 -*-
 import json
 import urllib2
-import time
-# from pandas import json
+import traceback
 
-import comment_manager
+from spider_comment import db_manager
 
 
 class SpiderDownloader:
     def __init__(self):
-        self.connectManager = comment_manager.CommentManager()
+        self.connectManager = db_manager.DbManager()
         self.comment_id_set = set()
 
     def get_html_cont(self, url):
-        # sec = random.randint(1, 4) # 随机延时1~4秒，防止被Ban
-        # time.sleep(sec)
         # userAgent = random.choice(self.ua_list)
         userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36 SE 2.X MetaSr 1.0'
         request = urllib2.Request(url)
@@ -27,27 +24,41 @@ class SpiderDownloader:
             return None
         return response.read()
 
+    def isneedfilter(self, content):
+        # 长度小于等于4个汉字
+        if content is None or len(set(content)) <= 12:
+            return True
+        # 不含有中文
+        # include_chinese = False
+        # for ch in content.decode('utf-8'):
+        #     if u'\u4e00' <= ch <= u'\u9fff':
+        #         include_chinese = True
+        #         break
+        # if not include_chinese:
+        #     return True
+        return False
+
     def getComments(self, item_str):
         page = 0
         page_faild = 0
 
         nextPage = True
-        print 'crawing skuid:', item_str
-
+        # print 'crawing skuid:', item_str
 
         while (nextPage):
-            # time.sleep(1)
             url = "http://club.jd.com/productpage/p-%s-s-0-t-3-p-%s.html" % (item_str, page)
-            html_cont = self.get_html_cont(url).decode('GBK', 'ignore').encode('UTF-8')
-            # sec = random.randint(1, 2) # 随机延时1~2秒，防止被Ban
-            # time.sleep(sec)
+            html_cont = None
+            try:
+                html_cont = self.get_html_cont(url).decode('GBK', 'ignore').encode('UTF-8')
+            except Exception as e:
+                print "error SpiderDownloader.getComments(), url=", url
+                print e
+                exstr = traceback.format_exc()
+                print exstr
 
             if (page - page_faild) >= 15 or page_faild > 20:
                 break
-
-            if html_cont == '':
-                print 'sleep 8 seconds for url %s' % (url)
-                # time.sleep(3)
+            if html_cont is None:
                 page += 1
                 page_faild += 1
                 continue
@@ -55,9 +66,7 @@ class SpiderDownloader:
             product_comments = json.loads(html_cont)
             comments = product_comments["comments"]
             if comments:
-                # print page
-                page = page + 1
-
+                page += 1
 
                 for comment in comments:
                     content = comment['content']
@@ -66,21 +75,36 @@ class SpiderDownloader:
                     if commentId in self.comment_id_set:
                         continue
                     else:
+                        images_str = ''
+                        if 'images' in comment:
+                            images = comment['images']
+                            if images:
+                                for image in images:
+                                    del image['associateId']
+                                    del image['productId']
+                                    del image['available']
+                                    del image['pin']
+                                    del image['dealt']
+                                    del image['imgTitle']
+                                    del image['isMain']
+                                    image['imgUrl'] = "http:" + str(image['imgUrl']).replace("s128x96", "s760x500", 1)
+                                images_str = json.dumps(images)
+                                # imageUrls = image['imgUrl'],';'
+                        comment['images'] = images_str
                         self.comment_id_set.add(commentId)
-                    # 简单过滤掉太短的评论
-                    if len(content) < 4:
-                        continue
-                    skuid = comment['referenceId']
 
+                    # 初步过滤
+                    if self.isneedfilter(content):
+                        continue
                     try:
                         self.connectManager.insert_comment(comment)
                     except Exception as e:
                         print e
+                        # exstr = traceback.format_exc()
+                        # print exstr
                         # 若commentid重复，说明数据库已存有该评论，自动跳过该sku
                         if 'Duplicate entry' in str(e):
                             return
-                            # exstr = traceback.format_exc()
-                            # print exstr
             else:
                 nextPage = False
                 # for k in self.comment_dictionary.keys():
