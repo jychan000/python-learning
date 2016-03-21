@@ -95,7 +95,9 @@ class SpiderConfig(object):
         cf.read("spider.ini")
 
         self.runtime = int(cf.get("baseconf", "runtime"))
-        # self.firsttarget = int(cf.get("baseconf", "runtime"))
+        self.targetItems = cf.get("baseconf", "targetItems").split(',')
+        self.worker = int(cf.get("baseconf", "worker"))
+
 
 if __name__ == '__main__':
     c1 = SpiderConfig()
@@ -103,4 +105,6 @@ if __name__ == '__main__':
     print c1.runtime
     c1.a = 7
     print c2.runtime
+    print c1.targetItems
+    print c1.worker
 

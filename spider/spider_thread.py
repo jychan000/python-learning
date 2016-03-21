@@ -48,7 +48,7 @@ class SpiderParserThread(threading.Thread):
 
                 self.outputer.collect_data(p_info)
 
-                if count_output >= 10:
+                if count_output >= 20:
                     self.outputer.out_2_mysql()
                     count_output = 0
                 success_count += 1

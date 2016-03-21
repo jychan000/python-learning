@@ -16,12 +16,16 @@ class SpiderMain(object):
         print "[%s] 爬取新item计划 %d分钟" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), self.runtime)
 
         self.item_pending_queue = Queue.Queue(0)
-        self.paserA = spider_thread.SpiderParserThread("parser_A", self.item_pending_queue, 4, (self.runtime + 2))
-        self.paserB = spider_thread.SpiderParserThread("parser_B", self.item_pending_queue, 5, (self.runtime + 2))
-        self.paserC = spider_thread.SpiderParserThread("parser_C", self.item_pending_queue, 6, (self.runtime + 2))
-        self.paserA.start()
-        self.paserB.start()
-        self.paserC.start()
+        for i in range(self.config.worker):
+            workername = "worker-%d" % (i)
+            spider_thread.SpiderParserThread(workername, self.item_pending_queue, (i + 4), (self.runtime + 2)).start()
+
+        # self.paserA = spider_thread.SpiderParserThread("parser_A", self.item_pending_queue, 4, (self.runtime + 2))
+        # self.paserB = spider_thread.SpiderParserThread("parser_B", self.item_pending_queue, 5, (self.runtime + 2))
+        # self.paserC = spider_thread.SpiderParserThread("parser_C", self.item_pending_queue, 6, (self.runtime + 2))
+        # self.paserA.start()
+        # self.paserB.start()
+        # self.paserC.start()
 
     def add_2_queue(self, items):
         if items is not None:
@@ -30,7 +34,8 @@ class SpiderMain(object):
 
     # 开始爬之前的动作
     def pre_craw(self):
-        target_items = ["jd_1021643905", "jd_549056", "jd_1135614", "jd_1783428386", "jd_1413825", "tb_123456", "vip_123456"] #"jd_1783428386", "jd_1413825",
+        target_items = self.config.targetItems
+        # target_items = ["jd_1021643905", "jd_549056", "jd_1135614", "jd_1783428386", "jd_1413825", "tb_123456", "vip_123456"] #"jd_1783428386", "jd_1413825",
         true_new_items = self.items.add_new_items(target_items)
         self.add_2_queue(true_new_items)
 
@@ -39,9 +44,7 @@ class SpiderMain(object):
         while ((time.time() - time_start) / 60 < self.runtime):
 
             if not self.items.has_new_item():
-                #items里没有新的item,无法继续探索其他item,结束item_miner工作
-                print "[%s] item管理器里面没有新的item,主程序停止抓取工作." \
-                      % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                print "[%s] item管理器里没有新的item,主程序停止抓取工作." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                 break
 
             new_item = self.items.get_new_item()
@@ -49,11 +52,9 @@ class SpiderMain(object):
             if new_items is not None:
                 true_new_items = self.items.add_new_items(new_items)
                 self.add_2_queue(true_new_items)
-
-            # print self.item_pending_queue._qsize(), self.items.nums()
             if self.item_pending_queue.qsize() > 200:
-                # print "item_queue数量大于300, 暂停5秒中..."
                 time.sleep(5)
+
         print "[%s] 主程序停止抓取items,等待全部子线程结束." % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
     def after_craw(self):
